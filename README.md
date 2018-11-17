@@ -1,0 +1,2 @@
+# clans
+A Slack Game
