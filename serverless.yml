@@ -37,16 +37,15 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  mention:
-    handler: handler.mention
+  app:
+    handler: index.handler
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
     events:
-    - http:
-        path: mention
-        method: post
+      - http: ANY /
+      - http: 'ANY {proxy+}'
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)
 #      - sns: greeter-topic
@@ -84,3 +83,6 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+
+plugins:
+  - serverless-offline

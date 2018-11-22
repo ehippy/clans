@@ -1,0 +1,29 @@
+{
+  "name": "clans",
+  "version": "1.0.0",
+  "description": "A Slack Game",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ehippy/clans.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ehippy/clans/issues"
+  },
+  "homepage": "https://github.com/ehippy/clans#readme",
+  "dependencies": {
+    "@slack/client": "^4.8.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "serverless": "^1.33.2",
+    "serverless-http": "^1.8.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.31.3"
+  }
+}
