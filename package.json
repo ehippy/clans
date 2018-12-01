@@ -19,6 +19,7 @@
   "dependencies": {
     "@slack/client": "^4.8.0",
     "body-parser": "^1.18.3",
+    "dynamoose": "^1.2.0",
     "express": "^4.16.4",
     "serverless": "^1.33.2",
     "serverless-http": "^1.8.0"

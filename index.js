@@ -1,5 +1,13 @@
 'use strict';
 
+var dynamoose = require('dynamoose');
+
+
+var Hero = dynamoose.model('Hero', { id: String, meat: Number, shroom: Number });
+
+
+const chance = require('./clans/chance.js');
+
 const { WebClient } = require('@slack/client');
 
 const token = '';
@@ -18,60 +26,28 @@ app.get('/', function (req, res) {
 })
 
 app.get('/chance', function (req, res) {
-
-  slack.conversations.list().then((res) => {
-    console.log('Convo list: ', res);
-
-    const channels = res.channels
-    for (let index = 0; index < channels.length; index++) {
-      const channel = channels[index];
-      if (channel.is_member) {
-        slack.chat.postMessage({
-          username: 'Mother',
-          channel: channel.id,
-          text: 'A chance encounter!',
-          "attachments": [
-            {
-                "text": "You picked something up.",
-                "fallback": "bad news",
-                "callback_id": Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-                "color": "#3AA3E3",
-                "attachment_type": "default",
-                "actions": [
-                    {
-                        "name": "choice",
-                        "text": "🍖",
-                        "type": "button",
-                        "value": "meat"
-                    },
-                    {
-                        "name": "choice",
-                        "text": "🍄",
-                        "type": "button",
-                        "value": "shroom"
-                    }
-                ]
-            }
-        ]
-        }).then((res) => {
-          console.log('Message sent: ', res);
-          return res.send(req.body)
-        })
-        .catch((err) => {
-          console.log('Error: ', err);
-          return res.send(req.body)
-        });
-      }
-    }
-
-  })
-
+  chance.runNow(slack)
 })
 
 app.post('/action', function (req, res) {
   const action = JSON.parse(req.body.payload)
   console.log('Action:', action)
-  res.send("<@" + action.user.id + "> ate a " + action.actions[0].value)
+
+  const addValue = {};
+  const flavor = action.actions[0].value;
+  addValue[flavor] = 1
+
+  Hero.update({id: action.team.id + '-' + action.user.id}, {$ADD: addValue, returnValues: 'UPDATED_NEW'})
+  .then((dynamoResult)=>{
+    console.log("dynamo add result", dynamoResult)
+    res.send("<@" + action.user.id + "> now carries " + dynamoResult[flavor] + " " + flavor)
+  })
+  .catch((err)=>{
+    console.log("dynamo add error", err)
+    res.send("<@" + action.user.id + "> stumbled and skinned his knee")
+  });
+
+
 })
 
 app.post('/event', function (req, res) {
@@ -98,5 +74,10 @@ app.post('/event', function (req, res) {
 
 })
 
+module.exports.heartbeat = function(event, context, callback) {
+  console.log('got heartbeat');
+  chance.runNow(slack)
+  callback(null, "word")
+}
+
 module.exports.handler = serverless(app);
-console.log('Started up')
