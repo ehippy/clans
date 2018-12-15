@@ -30,10 +30,14 @@ Player attributes: strength, dexterity, wisdom
 ### Realm (slack team)
 
 ### Clan (slack channel)
+Resources
+ * Peasants
+ * Warriors
 
 
+### Hero (slack user)
 
-### Player (slack user)
+
 
 ## Resources
 Wood, Meat, Shroom

@@ -9,11 +9,6 @@ provider:
         - "dynamodb:*"
       Resource: "*"
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
 package:
  include:
    - clans/**
@@ -29,19 +24,7 @@ functions:
   heartbeat:
     handler: index.heartbeat
     events:
-     - schedule: rate(2 minutes)
-
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+     - schedule: rate(7 minutes)
 
 plugins:
   - serverless-offline
