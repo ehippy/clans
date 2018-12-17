@@ -24,7 +24,7 @@ functions:
   heartbeat:
     handler: index.heartbeat
     events:
-     - schedule: rate(7 minutes)
+    #  - schedule: rate(7 minutes)
 
 plugins:
   - serverless-offline

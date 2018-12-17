@@ -47,6 +47,11 @@ app.post('/action', function (req, res) {
   }
 
   if (action.actions[0].name == "petPickup") {
+
+    res.status(200).end();
+
+    console.log('petPickup ended the res 200');
+
     const heroId = action.team.id + '-' + action.user.id;
     const details = action.actions[0].value.split(',')
     const purchaseCost = parseInt(details[0]);
@@ -66,9 +71,7 @@ app.post('/action', function (req, res) {
 
       if (hero.inventory[petToGet.eats] === undefined) {
         console.log('they had no ' + petToGet.eats);
-        return petPickupFailed("Not enough " + petToGet.eats, action, function (err) {
-          res.sendStatus(200);
-        })
+        return petPickupResultSend("<@" + action.user.id + "> didn't have any " + petToGet.eats + ' to tempt a ' + petToGet.emoji, action.response_url)
       }
 
       if (hero.inventory[petToGet.eats] >= purchaseCost) {
@@ -80,9 +83,7 @@ app.post('/action', function (req, res) {
           hero.pets[petToGet.emoji] += 1;
         }
       } else {
-        return petPickupFailed("Not enough " + petToGet.eats, action, function (err) {
-          res.sendStatus(200);
-        })
+        return petPickupResultSend("<@" + action.user.id + "> didn't have enough " + petToGet.eats + ' to tempt a ' + petToGet.emoji, action.response_url)
       }
 
       hero.save(function (err) {
@@ -90,46 +91,33 @@ app.post('/action', function (req, res) {
           return console.log(err);
         }
         console.log('Saved Hero', hero);
-        const response = {
-          type: 'message',
-          subtype: 'bot_message',
-          text: action.original_message.text,
-          "attachments": [
-            {
-              "text": "<@" + action.user.id + "> is now friend to " + hero.pets[petToGet.emoji] + " " + petToGet.emoji,
-              "callback_id": Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-              "color": "#3AA3E3",
-              "attachment_type": "default"
-            }
-          ]
-        };
-        res.send(response);
+
+        return petPickupResultSend("<@" + action.user.id + "> is now friend to " + hero.pets[petToGet.emoji] + " " + petToGet.emoji, action.response_url)
       });
     });
 
-    function petPickupFailed(msg, action, cb) {
+    function petPickupResultSend(msg, url) {
 
       console.log("petPickupFailed", msg);
+      console.log("petPickupFailed url", url);
 
       const postOptions = {
-        uri: action.response_url,
+        uri: url,
         method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
+        headers: {'Content-type': 'application/json'},
         json: {
           response_type: 'ephemeral',
           text: msg
         }
       }
+      request(postOptions, (error, response, body) => {
+        if (error) {
+          console.log("petPickupFailed Error sending ephemeral purchase response", err);
+        }
+        console.log("petPickupFailed ephemeral send done", body);
+      })
+
     }
-    request(postOptions, (error, response, body) => {
-      if (error) {
-        console.log("Error sending ephemeral purchase response", err);
-      }
-      console.log("ephemeral send done", body);
-      cb();
-    })
   }
 
 })

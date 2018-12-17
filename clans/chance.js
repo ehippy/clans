@@ -7,7 +7,7 @@ module.exports.runNow = function (slack) {
     const channels = res.channels
     for (let index = 0; index < channels.length; index++) {
 
-      if (Math.random() < 0.9) {
+      if (Math.random() < 0.8) {
         console.log("bailed on a roll");
         continue;
       }

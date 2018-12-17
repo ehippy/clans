@@ -31,8 +31,10 @@ Player attributes: strength, dexterity, wisdom
 
 ### Clan (slack channel)
 Resources
- * Peasants
- * Warriors
+ * Money
+ * Health
+ * People
+ * Buildings
 
 
 ### Hero (slack user)
